@@ -1,7 +1,7 @@
 from token import Token, tokens
 
 class lexer:
-    def __init__(input, position, readPosition, ch):
+    def __init__(self,input):
         self.input = input
         self.position = 0
         self.readPosition = 0
@@ -34,17 +34,17 @@ class lexer:
     
     def readIdentifier(self):
         position = self.position
-        while self.isLetter(self.ch):
+        while self.isLetter():
             self.readChar()
         self.unreadChar()
-        return self.input[position:self.position]
+        return self.input[position:self.position+1]
     
     def readNumber(self):
         position = self.position
         while self.isDigit() or self.isDot():
             self.readChar()
         self.unreadChar()
-        return self.input[position:self.position]
+        return self.input[position:self.position+1]
 
     def isLetter(self):
         return True if 'a' <= self.ch <= 'z' or 'A' <= self.ch <= 'Z' or self.ch == '_' else False
@@ -71,7 +71,7 @@ class lexer:
                 self.readChar()
                 tok = Token(tokens.BANG,"!=")
             else:
-                return None
+                tok = Token(tokens.ILLEGAL, self.ch)
         elif self.ch == "+":
             tok = Token(tokens.PLUS, "+")
         elif self.ch == "-":
@@ -108,13 +108,3 @@ class lexer:
                 tok = Token(tokens.ILLEGAL, self.ch)
         self.readChar()
         return tok
-            
-
-
-
-
-
-
-    
-
-
