@@ -1,6 +1,6 @@
 from token import Token, tokens
 
-class lexer:
+class Lexer:
     def __init__(self,input):
         self.input = input
         self.position = 0
@@ -34,7 +34,7 @@ class lexer:
     
     def readIdentifier(self):
         position = self.position
-        while self.isLetter():
+        while self.isLetter() or self.isDigit():        # this allows for variables named with a mix of letters and numbers
             self.readChar()
         self.unreadChar()
         return self.input[position:self.position+1]
@@ -47,13 +47,13 @@ class lexer:
         return self.input[position:self.position+1]
 
     def isLetter(self):
-        return True if 'a' <= self.ch <= 'z' or 'A' <= self.ch <= 'Z' or self.ch == '_' else False
-    
+        if not None: return True if 'a' <= self.ch <= 'z' or 'A' <= self.ch <= 'Z' or self.ch == '_' else False         # this is hard coding but I will fix it soon I just want to get the repl working
+                                                                                                                        # there is a problem with the function reading identifiers
     def isDigit(self):
-        return True if '0' <= self.ch <= '9' else False
+        if not None: return True if '0' <= self.ch <= '9' else False
     
     def isDot(self):
-        return True if self.ch == "." else False
+        if not None: return True if self.ch == "." else False
 
     def nextToken(self):
         tok = None
