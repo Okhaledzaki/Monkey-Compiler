@@ -6,10 +6,19 @@ import time
 class Parser:
     def __init__(self,l: Lexer):
         self.l = l
+        self.errors = list()
         self.curToken = None
         self.peekToken = None
         self.nextToken()
         self.nextToken()
+
+    def Errors(self):
+        return self.errors
+
+    def peekError(self, t: tokens):
+        msg = "expected next token to be {}, got {} instead".format(t, self.peekToken.Type)
+        self.errors.append(msg)
+
     
     def nextToken(self):
         self.curToken = self.peekToken
@@ -30,6 +39,8 @@ class Parser:
     def parseStatement(self):
         if self.curToken.Type == tokens.LET:
             return self.parseLetStatement()
+        elif self.curToken.Type == tokens.RETURN:
+            return self.parseReturnStatement()
         else:
             return None
 
@@ -52,6 +63,19 @@ class Parser:
         
         return stmt
 
+    def parseReturnStatement(self):
+        stmt = ast.ReturnStatement(Token=self.curToken,ReturnValue=None)
+        self.nextToken()
+
+        ################
+        ################
+        ################
+
+        while not self.curTokenIs(tokens.SEMICOLON):
+            self.nextToken()
+        
+        return stmt
+
     def curTokenIs(self, t: tokens):
         return self.curToken.Type == t
 
@@ -63,6 +87,7 @@ class Parser:
             self.nextToken()
             return True
         else:
+            self.peekError(t)
             return False
 
     

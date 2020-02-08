@@ -52,5 +52,17 @@ class LetStatement(Statement):
         return self.Token.Literal
 
 
+class ReturnStatement(Statement):
+    def __init__(self,Token: tokenz.Token, ReturnValue: Expression):
+        self.Token = Token
+        self.ReturnValue = ReturnValue
+    def statementNode():
+        pass
+    def TokenLiteral(self):
+        return self.Token.Literal
+
+        
+
+
 
     
