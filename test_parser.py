@@ -2,6 +2,8 @@ import ast
 import lexer
 import parser
 
+
+
 def TestLetStatements():
     input = """
     let x = 5;
@@ -12,14 +14,17 @@ def TestLetStatements():
     p = parser.Parser(l)
     program = p.ParseProgram()
     assert program != None
-    assert len(program) != 3
+    assert len(program.Statements) == 3
     tests = ["x","y","foobar"]
     for i in range(3):
         stmt = program.Statements[i]
-        testLetStatement(stmt, tests[i])
+        TestLetStatement(stmt, tests[i])
+    print("TestLetStatements test is success")
 
 def TestLetStatement(stmt, test):
     assert stmt.TokenLiteral() == "let"
     assert stmt.Name.Value == test
     
 
+
+TestLetStatements()
