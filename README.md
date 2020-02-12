@@ -2,4 +2,6 @@ This is a python implementation of thorsten ball's two books, the first one is a
 
 This repository for the purpose of me studying, so bad code, no tests, and gluing things to get the main function rolling. I just want to finish these two books asap to get started in the dragons book ... that would be a great repo; dragons in python.
 
-You can run the REPL from main.py ---> It is now just emits the tokens so it is more RTPL ... T for tokenize.
+You can run the REPL from main.py ---> It is now just emits the tokens so it is more RTPL ... T for tokenize.</br></br>
+
+***Note***: you can't make python script called token.py, because there exists another standard library with the same name, hence the ***tokenz.py*** name.
