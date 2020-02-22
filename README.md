@@ -4,4 +4,4 @@ This repository for the purpose of me studying, so bad code, no tests, and gluin
 
 You can run the REPL from main.py ---> It is now just emits the tokens so it is more RTPL ... T for tokenize.</br></br>
 
-***Note***: you can't make python script called token.py, because there exists another standard library with the same name, hence the ***tokenz.py*** name. </br></br> ***Working stopped untill finishing the text editor repository, to figure out how to make the REPL act like nano***
+***Note***: you can't make python script called token.py, because there exists another standard library with the same name, hence the ***tokenz.py*** name. </br></br> ***Working stopped untill finishing the text editor repository, to figure out how to make the REPL act like nano and how to deal with termios***
