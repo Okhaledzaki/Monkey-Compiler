@@ -4,20 +4,22 @@ import tokenz                            # helps a LOT in understanding things
 
 class Node(ABC):
     @abstractmethod
-    def TokenLiteral():
+    def TokenLiteral(self):
+        pass
+    def String(self):
         pass
 
 class Statement(Node):
     @abstractmethod
-    def statementNode():
+    def statementNode(self):
         pass
 
 class Expression(Node):
     @abstractmethod
-    def expressionNode():
+    def expressionNode(self):
         pass
 
-########################################################
+####################################################################
 
 class Program(Node):
     def __init__(self,Statements: List[Statement]):
@@ -29,37 +31,85 @@ class Program(Node):
         else:
             return ""
 
+    def String(self):
+        out = ""
+        for i in self.Statements:
+            out += i.String()
+        return out
 
-########################################################
+
+####################################################################
 
 class Identifier(Expression):
     def __init__(self, Token: tokenz.Token, Value: str):
         self.Token = Token
         self.Value = Value
-    def expressionNode():
+    def expressionNode(self):
         pass
     def TokenLiteral(self):
         return self.Token.Literal
+    def String(self):
+        return self.Value
+
+
+####################################################################
 
 class LetStatement(Statement):
     def __init__(self,Token: tokenz.Token ,Name: Identifier,Value: Expression):
         self.Token = Token
         self.Name = Name
         self.Value = Value
-    def statementNode():
+    def statementNode(self):
         pass
     def TokenLiteral(self):
         return self.Token.Literal
+    def String(self):
+        out = ""
+        out += self.TokenLiteral() + " "
+        out += self.Name.String()
+        out += " = "
+        if self.Value:
+            out += self.Value.String()
+        out += ";"
+        return out
 
+
+
+#####################################################################
 
 class ReturnStatement(Statement):
     def __init__(self,Token: tokenz.Token, ReturnValue: Expression):
         self.Token = Token
         self.ReturnValue = ReturnValue
-    def statementNode():
+    def statementNode(self):
         pass
     def TokenLiteral(self):
         return self.Token.Literal
+    def String(self):
+        out = ""
+        out += self.TokenLiteral()
+        if self.ReturnValue:
+            out += self.ReturnValue.String()
+        out += ";"
+        return out
+
+
+######################################################################
+
+class ExpressionStatement(Statement):
+    def __init__(self, Token: tokenz.Token, Expression: Expression):
+        self.Token = Token
+        self.Expression = Expression
+    def statementNode(self):
+        pass
+    def TokenLiteral(self):
+        return self.Token.Literal
+    def String(self):
+        if self.Expression:
+            return self.Expression.String()
+        return ""
+        
+
 
         
 

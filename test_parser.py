@@ -1,3 +1,5 @@
+# I did't use pytest by choice
+
 import ast
 import lexer
 import parser
@@ -7,7 +9,7 @@ def checkParserErrors(p):
     if len(errors) == 0:
         return
     else:
-        print("you fckn donkey")
+        print(":( sad")
     
     print("parser has {} errors".format(len(errors)))
     for msg in errors:
