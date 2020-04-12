@@ -54,8 +54,66 @@ def TestReturnStatements():
         assert stmt.TokenLiteral() == "return"
     print("TestReturnStatements test is success")
 
+
+#############################################################
+
+def TestIdentifierExpression():
+    input="""
+    foobar;
+    """
+    l = lexer.Lexer(input)
+    p = parser.Parser(l)
+    program = p.ParseProgram()
+    checkParserErrors(p)
+    assert len(program.Statements) == 1
+    stmt = program.Statements[0]
+    assert isinstance(stmt, ast.ExpressionStatement)
+    assert stmt.Expression.TokenLiteral() == "foobar"
+    print("TestIdenitiferExpression test is success")
     
+def TestIntegralLiteralExpression():
+    input="""
+    5;
+    """
+    l = lexer.Lexer(input)
+    p = parser.Parser(l)
+    program = p.ParseProgram()
+    checkParserErrors(p)
+    assert len(program.Statements) == 1
+    stmt = program.Statements[0]
+    assert isinstance(stmt, ast.ExpressionStatement)
+    literal = stmt.Expression
+    assert literal.Value == 5
+    assert literal.TokenLiteral() == "5"
+    print("TestIntegralLiteralExpression test is success")
+
+def TestIntegerLiteral(right, value):
+    assert right.Value == value
+
+def TestParsingPrefixExpression():
+    class struct:
+        def __init__(self, input, operator, integerValue):
+            self.input = input
+            self.operator = operator
+            self.integerValue = integerValue
+    prefixTests = [struct("!5;", "!", 5), struct("-15;", "-", 15)]
+    for test in prefixTests:
+        l = lexer.Lexer(test.input)
+        p = parser.Parser(l)
+        program = p.ParseProgram()
+        checkParserErrors(p)
+        assert len(program.Statements) == 1
+        stmt = program.Statements[0]
+        assert isinstance(stmt, ast.ExpressionStatement)
+        exp = stmt.Expression
+        assert exp.Operator == test.operator
+        TestIntegerLiteral(exp.Right, test.integerValue)
+        print("TestParsingPrefixExpression test is success")
+
 
 
 TestLetStatements()
 TestReturnStatements()
+TestIdentifierExpression()
+TestIntegralLiteralExpression()
+TestParsingPrefixExpression()

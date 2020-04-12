@@ -71,7 +71,7 @@ class Lexer:
                 self.readChar()
                 tok = Token(tokens.BANG,"!=")
             else:
-                tok = Token(tokens.ILLEGAL, self.ch)
+                tok = Token(tokens.BANG, self.ch)
         elif self.ch == "+":
             tok = Token(tokens.PLUS, "+")
         elif self.ch == "-":

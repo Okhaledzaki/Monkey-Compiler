@@ -54,6 +54,19 @@ class Identifier(Expression):
 
 ####################################################################
 
+class IntegerLiteral(Expression):
+    def __init__(self, Token: tokenz.Token, Value: int):
+        self.Token = Token
+        self.Value = Value
+    def expressionNode(self):
+        pass
+    def TokenLiteral(self):
+        return self.Token.Literal
+    def String(self):
+        return str(self.Token.Value)
+
+#####################################################################
+
 class LetStatement(Statement):
     def __init__(self,Token: tokenz.Token ,Name: Identifier,Value: Expression):
         self.Token = Token
@@ -108,6 +121,26 @@ class ExpressionStatement(Statement):
         if self.Expression:
             return self.Expression.String()
         return ""
+
+#######################################################################
+
+class PrefixExpression(Statement):
+    def __init__(self, Token: tokenz.Token, Operator: str, Right: Expression):
+        self.Token = Token
+        self.Operator = Operator
+        self.Right = Right
+    def statementNode(self):
+        pass
+    def TokenLiteral(self):
+        return self.Token.Literal
+    def String(self):
+        out = ""
+        out += "("
+        out += self.Operator
+        out += self.Right.String()
+        out += ")"
+        return out
+
         
 
 
