@@ -124,12 +124,12 @@ class ExpressionStatement(Statement):
 
 #######################################################################
 
-class PrefixExpression(Statement):
+class PrefixExpression(Expression):
     def __init__(self, Token: tokenz.Token, Operator: str, Right: Expression):
         self.Token = Token
         self.Operator = Operator
         self.Right = Right
-    def statementNode(self):
+    def expressionNode(self):
         pass
     def TokenLiteral(self):
         return self.Token.Literal
@@ -140,6 +140,28 @@ class PrefixExpression(Statement):
         out += self.Right.String()
         out += ")"
         return out
+
+##########################################################################
+
+class InfixExpression(Expression):
+    def __init__(self, Token: tokenz.Token, Left: Expression, Operator: str, Right: Expression):
+        self.Token = Token
+        self.Left = Left
+        self.Operator = Operator
+        self.Right = Right
+    def expressionNode(self):
+        pass
+    def TokenLiteral(self):
+        return self.Token.Literal
+    def String(self):
+        out = ""
+        out += "("
+        out += self.Left.String()
+        out += Operator
+        out += self.Right.String()
+        out += ")"
+        return out
+
 
         
 

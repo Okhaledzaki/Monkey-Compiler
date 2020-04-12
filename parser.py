@@ -24,6 +24,16 @@ class Parser:
                 'PREFIX',
                 'CALL'
         )
+        self.precedences = {
+            tokens.EQ : self.operators.EQUALS,
+            tokens.NOT_EQ : self.operators.EQUALS,
+            tokens.LT : self.operators.LESSGREATER,
+            tokens.GT : self.operators.LESSGREATER,
+            tokens.PLUS : self.operators.SUM,
+            tokens.MINUS : self.operators.SUM,
+            tokens.SLASH : self.operators.PRODUCT,
+            tokens.ASTERISK : self.operators.PRODUCT,
+        }
         self.prefixParseFns = dict()
         self.infixParseFns = dict()
         self.initializeParseFns()
@@ -46,6 +56,15 @@ class Parser:
         self.prefixParseFns[tokens.INT] = self.parseIntegerLiteral
         self.prefixParseFns[tokens.MINUS] = self.parsePrefixExpression
         self.prefixParseFns[tokens.BANG] = self.parsePrefixExpression
+
+        self.infixParseFns[tokens.PLUS] = self.parseInfixExpression
+        self.infixParseFns[tokens.MINUS] = self.parseInfixExpression
+        self.infixParseFns[tokens.SLASH] = self.parseInfixExpression
+        self.infixParseFns[tokens.ASTERISK] = self.parseInfixExpression
+        self.infixParseFns[tokens.EQ] = self.parseInfixExpression
+        self.infixParseFns[tokens.NOT_EQ] = self.parseInfixExpression
+        self.infixParseFns[tokens.LT] = self.parseInfixExpression
+        self.infixParseFns[tokens.GT] = self.parseInfixExpression
 
     def ParseProgram(self):
         program = ast.Program(None)
@@ -73,6 +92,15 @@ class Parser:
             self.noPrefixParseFnError(self.curToken.Type)
             return None
         leftExp = prefix()
+
+        while not self.peekTokenIs(tokens.SEMICOLON) and precedence < self.peekPrecedence():
+            if self.peekToken.Type in self.infixParseFns:
+                infix = self.infixParseFns[self.peekToken.Type]
+            else:
+                return leftExp
+            self.nextToken()
+            leftExp = infix(leftExp)
+
         return leftExp
 
     def parsePrefixExpression(self):
@@ -80,6 +108,14 @@ class Parser:
         self.nextToken()
         expression.Right = self.parseExpression(self.operators.PREFIX)
         return expression
+
+    def parseInfixExpression(self, left: ast.Expression):
+        expression = ast.InfixExpression(Token= self.curToken, Left= left, Operator= self.curToken.Literal, Right=None)
+        precedence = self.curPrecedence
+        self.nextToken()
+        expression.Right = self.parseExpression(precedence)
+        return expression
+
 
     def parseIdentifier(self):
         return ast.Identifier(Token = self.curToken, Value= self.curToken.Literal)
@@ -151,6 +187,18 @@ class Parser:
         else:
             self.peekError(t)
             return False
+    
+    def peekPrecedence(self):
+        if self.peekToken.Type in self.precedences:
+            return self.precedences[self.peekToken.Type]
+        else:
+            return self.operators.LOWEST
+    
+    def curPrecedence(self):
+        if self.curToken.Type in self.precedences:
+            return self.precedences[self.curToken.Type]
+        else:
+            return self.operators.LOWEST
 
     def noPrefixParseFnError(self, t : tokens):
         msg = f"no prefix parse function {t} :("

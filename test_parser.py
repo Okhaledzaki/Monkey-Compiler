@@ -110,10 +110,38 @@ def TestParsingPrefixExpression():
         TestIntegerLiteral(exp.Right, test.integerValue)
         print("TestParsingPrefixExpression test is success")
 
+def TestParsingInfixExpression():
+    class struct:
+        def __init__(self, input, leftValue, operator, rightValue):
+            self.input = input
+            self.leftValue = leftValue
+            self.operator = operator
+            self.rightValue = rightValue
+    infixTests = [struct("5 + 5;", 5, "+", 5),
+                  struct("5 - 5;", 5, "-", 5),
+                  struct("5 * 5;", 5, "*", 5),
+                  struct("5 / 5;", 5, "/", 5),
+                  struct("5 > 5;", 5, ">", 5),
+                  struct("5 < 5;", 5, "<", 5),
+                  struct("5 != 5;", 5, "!=", 5)]
+    for test in infixTests:
+        l = lexer.Lexer(test.input)
+        p = parser.Parser(l)
+        program = p.ParseProgram()
+        checkParserErrors(p)
+        assert len(program.Statements) == 1
+        stmt = program.Statements[0]
+        assert isinstance(stmt, ast.ExpressionStatement)
+        exp = stmt.Expression
+        TestIntegerLiteral(exp.Left, test.leftValue)
+        assert exp.Operator == test.operator
+        TestIntegerLiteral(exp.Right, test.rightValue)
 
+    print("TestParsingInfixExpression test is success")
 
 TestLetStatements()
 TestReturnStatements()
 TestIdentifierExpression()
 TestIntegralLiteralExpression()
 TestParsingPrefixExpression()
+TestParsingInfixExpression()
