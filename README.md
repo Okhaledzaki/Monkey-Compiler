@@ -1,9 +1,7 @@
 **UNDER CONSTRUCTION**
 
-This is a python implementation of thorsten ball's two books, the first one is a simple interpreter with Pratt parser and the second one he does bytecode, code generation, and virtual machines and bunch of other stuff ***didn't read it yet***. His writing is clean, although the Dolang code could be much better and cleaner, and there are fairly large number of hacks, but overall the books are amazing.
 
-This repository for the purpose of me studying, so bad code, no tests, and gluing things to get the main function rolling. I just want to finish these two books asap to get started in the dragons book.
-
-You can run the REPL from main.py ---> It is now just emits the tokens so it is more RTPL ... T for tokenize.</br></br>
-
-***Note***: you can't make python script called token.py, because there exists another standard library with the same name, hence the ***tokenz.py*** name. </br></br> 
+This is python implementation for the amazing books on interpreters and compilers by Thorsten Ball. The book code is written in ```golang```, so to retain the information in the book more, I decided to do it in ```Python``` as it is very flexible and malleable.
+The code in this repository follows the same sequence and structure as in the book as much as it is possible to do so, so you can use it instead of the code provided with the book and brush up on your ```Python``` skills.
+</br>You can run the REPL from main.py ---> It is now just emitting the tokens so it is more RTPL ... T for tokenize.</br></br>
+ 
