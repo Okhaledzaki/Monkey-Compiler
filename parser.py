@@ -56,6 +56,8 @@ class Parser:
         self.prefixParseFns[tokens.INT] = self.parseIntegerLiteral
         self.prefixParseFns[tokens.MINUS] = self.parsePrefixExpression
         self.prefixParseFns[tokens.BANG] = self.parsePrefixExpression
+        self.prefixParseFns[tokens.TRUE] = self.parseBoolean
+        self.prefixParseFns[tokens.FALSE] = self.parseBoolean
 
         self.infixParseFns[tokens.PLUS] = self.parseInfixExpression
         self.infixParseFns[tokens.MINUS] = self.parseInfixExpression
@@ -65,6 +67,7 @@ class Parser:
         self.infixParseFns[tokens.NOT_EQ] = self.parseInfixExpression
         self.infixParseFns[tokens.LT] = self.parseInfixExpression
         self.infixParseFns[tokens.GT] = self.parseInfixExpression
+        
 
     def ParseProgram(self):
         program = ast.Program(None)
@@ -119,6 +122,9 @@ class Parser:
 
     def parseIdentifier(self):
         return ast.Identifier(Token = self.curToken, Value= self.curToken.Literal)
+
+    def parseBoolean(self):
+        return ast.Boolean(Token = self.curToken, Value= self.curTokenIs(tokens.TRUE))
 
     def parseIntegerLiteral(self):
         lit = ast.IntegerLiteral(Token = self.curToken, Value=None)

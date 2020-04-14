@@ -67,6 +67,20 @@ class IntegerLiteral(Expression):
 
 #####################################################################
 
+class Boolean(Expression):
+    def __init__(self, Token: tokenz.Token, Value: bool):
+        self.Token = Token
+        self.Value = Value
+    def expressionNode(self):
+        pass
+    def TokenLiteral(self):
+        return self.Token.Literal
+    def String(self):
+        return self.Token.Literal
+
+
+#####################################################################
+
 class LetStatement(Statement):
     def __init__(self,Token: tokenz.Token ,Name: Identifier,Value: Expression):
         self.Token = Token

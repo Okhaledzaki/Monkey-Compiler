@@ -26,7 +26,6 @@ class Lexer:
             self.readChar()
 
     def peekChar(self):
-        self.skipWhitespace()
         if self.readPosition >= len(self.input):
             return None
         else:
@@ -34,40 +33,43 @@ class Lexer:
     
     def readIdentifier(self):
         position = self.position
-        while self.isLetter() or self.isDigit():        # this allows for variables named with a mix of letters and numbers
+        while self.isLetter():        # this allows for variables named with a mix of letters and numbers
             self.readChar()
         self.unreadChar()
         return self.input[position:self.position+1]
     
     def readNumber(self):
         position = self.position
-        while self.isDigit() or self.isDot():
+        while self.isDigit():
             self.readChar()
         self.unreadChar()
         return self.input[position:self.position+1]
 
     def isLetter(self):
-        if not None: return True if 'a' <= self.ch <= 'z' or 'A' <= self.ch <= 'Z' or self.ch == '_' else False         # this is hard coding but I will fix it soon I just want to get the repl working
-                                                                                                                        # there is a problem with the function reading identifiers
-    def isDigit(self):
-        if not None: return True if '0' <= self.ch <= '9' else False
+        try:
+            return True if 'a' <= self.ch <= 'z' or 'A' <= self.ch <= 'Z' or self.ch == '_' else False        
+        except:
+            raise Exception("Don't forget the ;")
     
-    def isDot(self):
-        if not None: return True if self.ch == "." else False
+    def isDigit(self):
+        return True if '0' <= self.ch <= '9' else False
+    
+    # def isDot(self):
+    #     return True if self.ch == "." else False
 
     def nextToken(self):
         tok = None
         self.skipWhitespace()
-        if self.ch == "=":
+        if self.ch == None:
+            tok = Token(tokens.EOF, "")
+        elif self.ch == "=":
             if self.peekChar() == "=":
-                ch = self.ch
                 self.readChar()
                 tok = Token(tokens.EQ,"==")
             else:
                 tok = Token(tokens.ASSIGN,"=")
         elif self.ch == "!":
             if self.peekChar() == "=":
-                ch = self.ch
                 self.readChar()
                 tok = Token(tokens.NOT_EQ,"!=")
             else:
@@ -96,8 +98,6 @@ class Lexer:
             tok = Token(tokens.LBRACE, "{")
         elif self.ch == "}":
             tok = Token(tokens.RBRACE, "}")
-        elif self.ch == None:
-            tok = Token(tokens.EOF, "")
         else:
             if self.isLetter():
                 literal = self.readIdentifier()

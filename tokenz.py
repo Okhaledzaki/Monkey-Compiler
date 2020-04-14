@@ -59,4 +59,4 @@ class Token:
         return tokens.IDENT
 
     def __repr__(self):
-        return "token->" + str(self.Type) + ":::literal->" + str(self.Literal)
+        return "token is: " + str(self.Type) + " and the literal is: " + str(self.Literal)

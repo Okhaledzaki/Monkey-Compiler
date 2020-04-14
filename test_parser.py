@@ -87,6 +87,25 @@ def TestIntegralLiteralExpression():
     assert literal.TokenLiteral() == "5"
     print("TestIntegralLiteralExpression test is success")
 
+def TestBooleanExpression():
+    class struct:
+        def __init__(self, input, expectedBoolean):
+            self.input = input
+            self.expectedBoolean = expectedBoolean
+    tests = [struct("true;", True), struct("false;", False)]
+    for test in tests:
+        l = lexer.Lexer(test.input)
+        p = parser.Parser(l)
+        program = p.ParseProgram()
+        checkParserErrors(p)
+        assert len(program.Statements) == 1
+        stmt = program.Statements[0]
+        assert isinstance(stmt, ast.ExpressionStatement)
+        boolean = stmt.Expression
+        assert boolean.Value == test.expectedBoolean
+        print("TestBooleanExpression test is success")
+
+
 def TestIntegerLiteral(right, value):
     assert right.Value == value
 
@@ -96,7 +115,8 @@ def TestParsingPrefixExpression():
             self.input = input
             self.operator = operator
             self.integerValue = integerValue
-    prefixTests = [struct("!5;", "!", 5), struct("-15;", "-", 15)]
+    prefixTests = [struct("!5;", "!", 5), struct("-15;", "-", 15),
+                   struct("!true;", "!", True), struct("!false;", "!", False)]
     for test in prefixTests:
         l = lexer.Lexer(test.input)
         p = parser.Parser(l)
@@ -123,7 +143,9 @@ def TestParsingInfixExpression():
                   struct("5 / 5;", 5, "/", 5),
                   struct("5 > 5;", 5, ">", 5),
                   struct("5 < 5;", 5, "<", 5),
-                  struct("5 != 5;", 5, "!=", 5)]
+                  struct("5 != 5;", 5, "!=", 5),
+                  struct("true == true;", True, "==", True),
+                  struct("true != false;", True, "!=", False)]
     for test in infixTests:
         l = lexer.Lexer(test.input)
         p = parser.Parser(l)
@@ -139,9 +161,24 @@ def TestParsingInfixExpression():
 
     print("TestParsingInfixExpression test is success")
 
+def TestOperatorPrecedenceParsing():
+    class struct:
+        def __init__(self, input, expected):
+            self.input = input
+            self.expected = expected
+    tests = [struct("5 > 4 == 3 < 1;", "((5 > 4) == (3 < 1));")]
+    for test in tests:
+        l = lexer.Lexer(test.input)
+        p = parser.Parser(l)
+        program = p.ParseProgram()
+        checkParserErrors(p)
+        assert program.String() == test.expected
+
 TestLetStatements()
 TestReturnStatements()
 TestIdentifierExpression()
 TestIntegralLiteralExpression()
 TestParsingPrefixExpression()
 TestParsingInfixExpression()
+TestBooleanExpression()
+TestOperatorPrecedenceParsing()
