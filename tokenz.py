@@ -31,16 +31,6 @@ class tokens(enum.Enum):
     EQ = "=="
     NOT_EQ = "!="
 
-keywords = {
-    "fn": tokens.FUNCTION,
-    "let": tokens.LET,
-    "true": tokens.TRUE,
-    "false": tokens.FALSE,
-    "if": tokens.IF,
-    "else": tokens.ELSE,
-    "return": tokens.RETURN,
-}
-
 
 ####################################################################################################
 ####################################################################################################
@@ -52,11 +42,5 @@ class Token:
         self.Type = Type
         self.Literal = Literal
     
-    @staticmethod
-    def isKeyword(word):
-        if word in keywords:
-            return keywords[word]
-        return tokens.IDENT
-
     def __repr__(self):
         return "token is: " + str(self.Type) + " and the literal is: " + str(self.Literal)

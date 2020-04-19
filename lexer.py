@@ -1,68 +1,70 @@
 from tokenz import *
 
+
+keywords = {
+    "fn": tokens.FUNCTION,
+    "let": tokens.LET,
+    "true": tokens.TRUE,
+    "false": tokens.FALSE,
+    "if": tokens.IF,
+    "else": tokens.ELSE,
+    "return": tokens.RETURN,
+}
+
+
 class Lexer:
-    def __init__(self,input):
+    def __init__(self, input):
         self.input = input
-        self.position = -1
+        self.position = 0
         self.readPosition = 0
         self.ch = ""
         self.readChar()
     
+    def skipWhitespace(self):
+        while self.ch == ' ' or self.ch == '\t' or self.ch == '\n' or self.ch == '\r':
+            self.readChar()
+
+    def LookupIdent(self, word):
+        if word in keywords:
+            return keywords[word]
+        return tokens.IDENT
+    
     def readChar(self):
         if self.readPosition >= len(self.input):
-            self.ch = None
+            self.ch = ""
         else:
             self.ch = self.input[self.readPosition]
         self.position = self.readPosition
         self.readPosition += 1
     
-    def unreadChar(self):
-        self.ch = self.input[self.position-1]
-        self.position-=1
-        self.readPosition-=1
-    
-    def skipWhitespace(self):
-        while self.ch == " " or self.ch == "\t" or self.ch == "\n" or self.ch == "\r":
-            self.readChar()
-
     def peekChar(self):
         if self.readPosition >= len(self.input):
-            return None
+            return ""
         else:
             return self.input[self.readPosition]
-    
+
     def readIdentifier(self):
         position = self.position
-        while self.isLetter():        # this allows for variables named with a mix of letters and numbers
+        while self.isLetter():
             self.readChar()
-        self.unreadChar()
-        return self.input[position:self.position+1]
-    
+        return self.input[position:self.position]
+
+    def isLetter(self):
+        return 'a' <= self.ch <= 'z' or 'A' <= self.ch <= 'Z' or self.ch == '_'         ## concatenating boolean operators FTW
+                                                                                        ## python is the best
+    def isDigit(self):
+        return '0' <= self.ch <= '9'
+
     def readNumber(self):
         position = self.position
         while self.isDigit():
             self.readChar()
-        self.unreadChar()
-        return self.input[position:self.position+1]
-
-    def isLetter(self):
-        try:
-            return True if 'a' <= self.ch <= 'z' or 'A' <= self.ch <= 'Z' or self.ch == '_' else False        
-        except:
-            raise Exception("\nDude, don't forget the semicolon!!!!!!!!!!!")
-    
-    def isDigit(self):
-        return True if '0' <= self.ch <= '9' else False
-    
-    # def isDot(self):
-    #     return True if self.ch == "." else False
+        return self.input[position:self.position]
 
     def nextToken(self):
-        tok = None
+        tok = Token(None, None)
         self.skipWhitespace()
-        if self.ch == None:
-            tok = Token(tokens.EOF, "")
-        elif self.ch == "=":
+        if self.ch == "=":
             if self.peekChar() == "=":
                 self.readChar()
                 tok = Token(tokens.EQ,"==")
@@ -75,36 +77,45 @@ class Lexer:
             else:
                 tok = Token(tokens.BANG, self.ch)
         elif self.ch == "+":
-            tok = Token(tokens.PLUS, "+")
+            tok = Token(tokens.PLUS, self.ch)
         elif self.ch == "-":
-            tok = Token(tokens.MINUS, "-")
+            tok = Token(tokens.MINUS, self.ch)
         elif self.ch == "/":
-            tok = Token(tokens.SLASH, "/")
+            tok = Token(tokens.SLASH, self.ch)
         elif self.ch == "*":
-            tok = Token(tokens.ASTERISK, "*")
+            tok = Token(tokens.ASTERISK, self.ch)
         elif self.ch == "<":
-            tok = Token(tokens.LT, "<")
+            tok = Token(tokens.LT, self.ch)
         elif self.ch == ">":
-            tok = Token(tokens.GT, ">")
+            tok = Token(tokens.GT, self.ch)
         elif self.ch == ";":
-            tok = Token(tokens.SEMICOLON, ";")
+            tok = Token(tokens.SEMICOLON, self.ch)
         elif self.ch == "(":
-            tok = Token(tokens.LPAREN,"(")
+            tok = Token(tokens.LPAREN, self.ch)
         elif self.ch == ")":
-            tok = Token(tokens.RPAREN,")")
+            tok = Token(tokens.RPAREN, self.ch)
         elif self.ch == ",":
-            tok = Token(tokens.COMMA, ",")
+            tok = Token(tokens.COMMA, self.ch)
         elif self.ch == "{":
-            tok = Token(tokens.LBRACE, "{")
+            tok = Token(tokens.LBRACE, self.ch)
         elif self.ch == "}":
-            tok = Token(tokens.RBRACE, "}")
+            tok = Token(tokens.RBRACE, self.ch)
+        elif self.ch == "":
+            tok.Literal = ""
+            tok.Type = tokens.EOF
         else:
             if self.isLetter():
-                literal = self.readIdentifier()
-                tok = Token(Token.isKeyword(literal),literal)
-            elif self.isDigit():
-                tok = Token(tokens.INT, self.readNumber())
+                Identifier = self.readIdentifier()
+                Type = self.LookupIdent(Identifier)
+                return Token(Type, Identifier)
+            if self.isDigit():
+                Type = tokens.INT
+                Literal = self.readNumber()
+                return Token(Type, Literal)
             else:
-                tok = Token(tokens.ILLEGAL, self.ch)
+                return Token(tokens.ILLEGAL, self.ch)
         self.readChar()
         return tok
+
+
+    
