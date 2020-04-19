@@ -3,7 +3,7 @@ from tokenz import *
 class Lexer:
     def __init__(self,input):
         self.input = input
-        self.position = 0
+        self.position = -1
         self.readPosition = 0
         self.ch = ""
         self.readChar()
@@ -49,7 +49,7 @@ class Lexer:
         try:
             return True if 'a' <= self.ch <= 'z' or 'A' <= self.ch <= 'Z' or self.ch == '_' else False        
         except:
-            raise Exception("Don't forget the ;")
+            raise Exception("\nDude, don't forget the semicolon!!!!!!!!!!!")
     
     def isDigit(self):
         return True if '0' <= self.ch <= '9' else False
