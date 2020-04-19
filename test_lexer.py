@@ -1,4 +1,4 @@
-from _lexer import *
+from lexer import *
 
 
 def TestNextToken():

@@ -13,8 +13,6 @@ class Parser:
         self.errors = list()
         self.curToken = None
         self.peekToken = None
-        self.nextToken()
-        self.nextToken()
         self.operators = enum(
                 'LOWEST',
                 'EQUALS',
@@ -37,6 +35,8 @@ class Parser:
         self.prefixParseFns = dict()
         self.infixParseFns = dict()
         self.initializeParseFns()
+        self.nextToken()
+        self.nextToken()
 
 
     def Errors(self):
@@ -209,6 +209,8 @@ class Parser:
     def noPrefixParseFnError(self, t : tokens):
         msg = f"no prefix parse function {t} :("
         self.errors.append(msg)
+
+
 
 
     
