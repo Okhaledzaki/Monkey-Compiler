@@ -88,14 +88,13 @@ class Parser:
         else:
             return self.parseExpressionStatement()
 
-    def parseExpression(self, precedence: int):
+    def parseExpression(self, precedence):
         if self.curToken.Type in self.prefixParseFns:
             prefix = self.prefixParseFns[self.curToken.Type]
         else:
             self.noPrefixParseFnError(self.curToken.Type)
             return None
         leftExp = prefix()
-
         while not self.peekTokenIs(tokens.SEMICOLON) and precedence < self.peekPrecedence():
             if self.peekToken.Type in self.infixParseFns:
                 infix = self.infixParseFns[self.peekToken.Type]
@@ -114,7 +113,7 @@ class Parser:
 
     def parseInfixExpression(self, left: ast.Expression):
         expression = ast.InfixExpression(Token= self.curToken, Left= left, Operator= self.curToken.Literal, Right=None)
-        precedence = self.curPrecedence
+        precedence = self.curPrecedence()
         self.nextToken()
         expression.Right = self.parseExpression(precedence)
         return expression
@@ -172,7 +171,7 @@ class Parser:
     def parseExpressionStatement(self):
         stmt = ast.ExpressionStatement(Token=self.curToken,Expression=None)
         stmt.Expression = self.parseExpression(self.operators.LOWEST)
-
+        
         if self.peekTokenIs(tokens.SEMICOLON):
             self.nextToken()
 

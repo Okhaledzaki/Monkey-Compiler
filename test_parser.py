@@ -103,7 +103,6 @@ def TestBooleanExpression():
         assert isinstance(stmt, ast.ExpressionStatement)
         boolean = stmt.Expression
         assert boolean.Value == test.expectedBoolean
-    
     print("TestBooleanExpression test is success")
 
 
@@ -129,7 +128,6 @@ def TestParsingPrefixExpression():
         exp = stmt.Expression
         assert exp.Operator == test.operator
         TestIntegerLiteral(exp.Right, test.integerValue)
-
     print("TestParsingPrefixExpression test is success")
 
 def TestParsingInfixExpression():
@@ -160,7 +158,6 @@ def TestParsingInfixExpression():
         TestIntegerLiteral(exp.Left, test.leftValue)
         assert exp.Operator == test.operator
         TestIntegerLiteral(exp.Right, test.rightValue)
-
     print("TestParsingInfixExpression test is success")
 
 def TestOperatorPrecedenceParsing():
@@ -168,19 +165,20 @@ def TestOperatorPrecedenceParsing():
         def __init__(self, input, expected):
             self.input = input
             self.expected = expected
-    tests = [struct("5 > 4 == 3 < 1","((5 > 4) == (3 < 1))")]
+    tests = [struct("5 > 4 == 3 < 1","((5>4)==(3<1))")]
     for test in tests:
         l = lexer.Lexer(test.input)
         p = parser.Parser(l)
         program = p.ParseProgram()
         checkParserErrors(p)
         assert program.String() == test.expected
+    print("TestOperatorPrecedenceParsing test is success")
 
-# TestLetStatements()
-# TestReturnStatements()
-# TestIdentifierExpression()
-# TestIntegralLiteralExpression()
-# TestParsingPrefixExpression()
-# TestParsingInfixExpression()
-# TestBooleanExpression()
+TestLetStatements()
+TestReturnStatements()
+TestIdentifierExpression()
+TestIntegralLiteralExpression()
+TestParsingPrefixExpression()
+TestParsingInfixExpression()
+TestBooleanExpression()
 TestOperatorPrecedenceParsing()

@@ -63,7 +63,7 @@ class IntegerLiteral(Expression):
     def TokenLiteral(self):
         return self.Token.Literal
     def String(self):
-        return str(self.Token.Value)
+        return self.Value
 
 #####################################################################
 
@@ -170,9 +170,9 @@ class InfixExpression(Expression):
     def String(self):
         out = ""
         out += "("
-        out += self.Left.String()
-        out += Operator
-        out += self.Right.String()
+        out += str(self.Left.String())
+        out += self.Operator
+        out += str(self.Right.String())
         out += ")"
         return out
 
