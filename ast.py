@@ -19,7 +19,7 @@ class Expression(Node):
     def expressionNode(self):
         pass
 
-####################################################################
+################################################################################
 
 class Program(Node):
     def __init__(self,Statements: List[Statement]):
@@ -38,7 +38,7 @@ class Program(Node):
         return out
 
 
-####################################################################
+################################################################################
 
 class Identifier(Expression):
     def __init__(self, Token: tokenz.Token, Value: str):
@@ -52,7 +52,7 @@ class Identifier(Expression):
         return self.Value
 
 
-####################################################################
+################################################################################
 
 class IntegerLiteral(Expression):
     def __init__(self, Token: tokenz.Token, Value: int):
@@ -65,7 +65,7 @@ class IntegerLiteral(Expression):
     def String(self):
         return self.Value
 
-#####################################################################
+################################################################################
 
 class Boolean(Expression):
     def __init__(self, Token: tokenz.Token, Value: bool):
@@ -79,7 +79,7 @@ class Boolean(Expression):
         return self.Token.Literal
 
 
-#####################################################################
+################################################################################
 
 class LetStatement(Statement):
     def __init__(self,Token: tokenz.Token ,Name: Identifier,Value: Expression):
@@ -102,7 +102,7 @@ class LetStatement(Statement):
 
 
 
-#####################################################################
+################################################################################
 
 class ReturnStatement(Statement):
     def __init__(self,Token: tokenz.Token, ReturnValue: Expression):
@@ -121,7 +121,7 @@ class ReturnStatement(Statement):
         return out
 
 
-######################################################################
+################################################################################
 
 class ExpressionStatement(Statement):
     def __init__(self, Token: tokenz.Token, Expression: Expression):
@@ -136,7 +136,7 @@ class ExpressionStatement(Statement):
             return self.Expression.String()
         return ""
 
-#######################################################################
+################################################################################
 
 class PrefixExpression(Expression):
     def __init__(self, Token: tokenz.Token, Operator: str, Right: Expression):
@@ -155,7 +155,7 @@ class PrefixExpression(Expression):
         out += ")"
         return out
 
-##########################################################################
+################################################################################
 
 class InfixExpression(Expression):
     def __init__(self, Token: tokenz.Token, Left: Expression, Operator: str, Right: Expression):
@@ -175,6 +175,102 @@ class InfixExpression(Expression):
         out += str(self.Right.String())
         out += ")"
         return out
+
+################################################################################
+
+class BlockStatement(Statement):
+    def __init__(self, Token: tokenz.Token, Statements: List[Statement]):
+        self.Token = Token
+        self.Statements = Statement
+    def statementNode(self):
+        pass
+    def TokenLiteral(self):
+        return self.Token.Literal
+    def String(self):
+        out = ""
+        for statement in self.Statements:
+            out += statement.String()
+        return out
+
+
+
+
+
+
+################################################################################
+
+class IfExpression(Expression):
+    def __init__(self, Token: tokenz.Token, Condition: Expression, Consequence: BlockStatement, Alternative: BlockStatement):
+        self.Token = Token
+        self.Condition = Condition
+        self.Consequence = Consequence
+        self.Alternative = Alternative
+    def expressionNode(self):
+        pass
+    def TokenLiteral(self):
+        return self.Token.Literal
+    def String(self):
+        out = ""
+        out += "if"
+        out += self.Condition.String()
+        out += " "
+        out += self.Consequence.String()
+        if self.Alternative is not None:
+            out += " else "
+            out += self.Alternative.String()
+        return out
+
+################################################################################
+
+class FunctionLiteral(Expression):
+    def __init__(self, Token: tokenz.Token, Parameters: List[Identifier], Body: BlockStatement):
+        self.Token = Token
+        self.Parameters = Parameters
+        self.Body = Body
+    def expressionNode(self):
+        pass
+    def TokenLiteral(self):
+        return self.Token.Literal
+    def String(self):
+        print("fuccc")
+        out = ""
+        params = []
+        for param in self.Parameters:
+            params.append(param)
+        
+        out += self.TokenLiteral()
+        out += "("
+        out += ', '.join(params)
+        out += ")"
+        out += self.Body.String()
+
+        return out
+
+################################################################################
+
+class CallExpression(Expression):
+    def __init__(self, Token: tokenz.Token, Function: Expression, Arguments: List[Expression]):
+        self.Token = Token
+        self.Function = Function
+        self.Arguments = []
+    def expressionNode(self):
+        pass
+    def TokenLiteral(self):
+        return self.Token.Literal
+    def String(self):
+        out = ""
+        args = []
+        for arg in self.Arguments:
+            args.append(arg)
+        
+        out += self.Function.String()
+        out += "("
+        args = [x.String() for x in args]
+        out += ", ".join(args)
+        out += ")"
+        return out
+
+    
 
 
         

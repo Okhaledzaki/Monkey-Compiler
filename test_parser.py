@@ -116,7 +116,7 @@ def TestParsingPrefixExpression():
             self.operator = operator
             self.integerValue = integerValue
     prefixTests = [struct("!5;", "!", 5), struct("-15;", "-", 15),
-                   struct("!true;", "!", True), struct("!false;", "!", False)]
+                   struct("!true", "!", True), struct("!false", "!", False)]
     for test in prefixTests:
         l = lexer.Lexer(test.input)
         p = parser.Parser(l)
@@ -144,8 +144,8 @@ def TestParsingInfixExpression():
                   struct("5 > 5;", 5, ">", 5),
                   struct("5 < 5;", 5, "<", 5),
                   struct("5 != 5;", 5, "!=", 5),
-                  struct("true == true;", True, "==", True),
-                  struct("true != false;", True, "!=", False)]
+                  struct("true == true", True, "==", True),
+                  struct("true != false", True, "!=", False)]
     for test in infixTests:
         l = lexer.Lexer(test.input)
         p = parser.Parser(l)
@@ -165,7 +165,12 @@ def TestOperatorPrecedenceParsing():
         def __init__(self, input, expected):
             self.input = input
             self.expected = expected
-    tests = [struct("5 > 4 == 3 < 1","((5>4)==(3<1))")]
+    tests = [struct("5 > 4 == 3 < 1", "((5>4)==(3<1))"),
+             struct("3 < 5 == true", "((3<5)==true)"),
+             struct("1 + (2 + 3) + 4", "((1+(2+3))+4)"),
+             struct("2 / ( 5+ 5 )", "(2/(5+5))"),
+             struct("a+add(b*c)+d","((a+add((b*c)))+d)"),
+             struct("add(a+b+c*d/f+g)","add((((a+b)+((c*d)/f))+g))")]
     for test in tests:
         l = lexer.Lexer(test.input)
         p = parser.Parser(l)
@@ -173,6 +178,74 @@ def TestOperatorPrecedenceParsing():
         checkParserErrors(p)
         assert program.String() == test.expected
     print("TestOperatorPrecedenceParsing test is success")
+
+def TestIfExpression():
+    input = "if (x < y) { x } else { y }"
+    l = lexer.Lexer(input)
+    p = parser.Parser(l)
+    program = p.ParseProgram()
+    checkParserErrors(p)
+    assert len(program.Statements) == 1
+    stmt = program.Statements[0]
+    exp = stmt.Expression
+    assert isinstance(exp, ast.IfExpression)
+    assert exp.String() == "if(x<y) x else y"
+    assert exp.Consequence.Statements[0].String() == "x"
+    assert exp.Alternative.Statements[0].String() == "y"
+    print("TestIfExpression test is success")
+
+def TestFunctionalLiteralParsing():
+    input = "fn(x, y) {x + y;}"
+    l = lexer.Lexer(input)
+    p = parser.Parser(l)
+    program = p.ParseProgram()
+    checkParserErrors(p)
+    assert len(program.Statements) == 1
+    stmt = program.Statements[0]
+    function = stmt.Expression
+    assert len(function.Parameters) == 2
+    assert function.Parameters[0].Value == "x"
+    assert function.Parameters[1].Value == "y"
+    assert len(function.Body.Statements) == 1
+    statement = function.Body.Statements[0]
+    assert statement.String() == "(x+y)"
+
+def TestFunctionParameterParsing():
+    class struct:
+        def __init__(self, input, expectedParams):
+            self.input = input
+            self.expectedParams = expectedParams
+    tests = [struct(input = "fn() {};", expectedParams = []),
+             struct(input = "fn(x) {};", expectedParams = ["x"]),
+             struct(input = "fn(x, y, z) {};", expectedParams = ["x", "y", "z"])]
+    for test in tests:
+        l = lexer.Lexer(test.input)
+        p = parser.Parser(l)
+        program = p.ParseProgram()
+        checkParserErrors(p)
+        stmt = program.Statements[0]
+        function = stmt.Expression
+        assert len(function.Parameters) == len(test.expectedParams)
+        for i in range(len(test.expectedParams)):
+            assert function.Parameters[i].Value == test.expectedParams[i]
+    print("TestFunctionParameterParsing test is success")
+    
+
+def TestCallExpressionParsing():
+    input = "add(1, 2*3, 4+5);"
+    l = lexer.Lexer(input)
+    p = parser.Parser(l)
+    program = p.ParseProgram()
+    checkParserErrors(p)
+    assert len(program.Statements) == 1
+    stmt = program.Statements[0]
+    exp = stmt.Expression
+    assert exp.Function.TokenLiteral() == "add"
+    assert len(exp.Arguments) == 3
+    assert exp.Arguments[0].String() == 1
+    assert exp.Arguments[1].String() == "(2*3)"
+    assert exp.Arguments[2].String() == "(4+5)"
+    print("TestCallExpressionParsing is done")
 
 TestLetStatements()
 TestReturnStatements()
@@ -182,3 +255,7 @@ TestParsingPrefixExpression()
 TestParsingInfixExpression()
 TestBooleanExpression()
 TestOperatorPrecedenceParsing()
+TestIfExpression()
+TestFunctionParameterParsing()
+TestFunctionalLiteralParsing()
+TestCallExpressionParsing()

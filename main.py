@@ -1,21 +1,28 @@
 import getpass
 import sys
 from lexer import *
+from parser import *
 from tokenz import *
+
+def printParserErrors(errors):
+    for msg in errors:
+        print(msg)
+
+
 name = getpass.getuser()
 print("Hello "+name)
-
+PROMPT = ">>"
 while True:
-    print(">> ",end="")
-    try:
-        line = input()
-    except:
-        print("good bye")
-        sys.exit()
+    print(PROMPT, end=" ")
+    line = input()
     l = Lexer(line)
-    tokenz = l.nextToken().Type
-    while tokenz is not tokens.EOF:         # line by line
-        print(tokenz,end=" ")
-        tokenz = l.nextToken().Type
-    print()
+    p = Parser(l)
+    program = p.ParseProgram()
+    if len(p.errors) != 0:
+        printParserErrors(p.errors)
+        continue
+    print(program.String())
+
+
+    
 
