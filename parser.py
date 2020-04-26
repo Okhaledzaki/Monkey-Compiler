@@ -1,5 +1,5 @@
 import ast 
-from tokenz import *
+from _token import *        # because there is "token" in python
 from lexer import *
 from utilities import *
 import time

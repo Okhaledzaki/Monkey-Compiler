@@ -2,7 +2,7 @@ import getpass
 import sys
 from lexer import *
 from parser import *
-from tokenz import *
+from _token import *
 
 def printParserErrors(errors):
     for msg in errors:

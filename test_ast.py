@@ -1,20 +1,20 @@
 # I didn't use pytest by
 
-import ast, tokenz, parser, lexer
+import ast, _token, parser, lexer
 
 def TestString():
     program = ast.Program(
         Statements = [
             ast.LetStatement(
-                Token = tokenz.Token(Type=tokenz.tokens.LET, Literal= "let"),
+                Token = _token.Token(Type=_token.tokens.LET, Literal= "let"),
                 Name = ast.Identifier(
-                    Token=tokenz.Token(
-                        Type=tokenz.tokens.IDENT, 
+                    Token=_token.Token(
+                        Type=_token.tokens.IDENT, 
                         Literal= "myVar"), 
                         Value= "myVar"),
                 Value = ast.Identifier(
-                    Token=tokenz.Token(
-                        Type=tokenz.tokens.IDENT, 
+                    Token=_token.Token(
+                        Type=_token.tokens.IDENT, 
                         Literal= "anotherVar"),
                         Value="anotherVar"))
             ])

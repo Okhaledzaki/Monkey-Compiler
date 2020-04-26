@@ -1,6 +1,11 @@
 from abc import ABC, abstractmethod
 from typing import List                 # I will use typing hints extensively
-import tokenz                            # helps a LOT in understanding things
+import _token                            # helps a LOT in understanding things
+
+
+# you maybe wondering why bother with type hints and stuff
+# see evaluator and you will see its importance
+
 
 class Node(ABC):
     @abstractmethod
@@ -27,7 +32,7 @@ class Program(Node):
     
     def TokenLiteral(self):
         if len(self.Statements) > 0:
-            return self.Statements[0].TokenLiteral()    # the first tokenz
+            return self.Statements[0].TokenLiteral()    # the first _token
         else:
             return ""
 
@@ -41,7 +46,7 @@ class Program(Node):
 ################################################################################
 
 class Identifier(Expression):
-    def __init__(self, Token: tokenz.Token, Value: str):
+    def __init__(self, Token: _token.Token, Value: str):
         self.Token = Token
         self.Value = Value
     def expressionNode(self):
@@ -55,7 +60,7 @@ class Identifier(Expression):
 ################################################################################
 
 class IntegerLiteral(Expression):
-    def __init__(self, Token: tokenz.Token, Value: int):
+    def __init__(self, Token: _token.Token, Value: int):
         self.Token = Token
         self.Value = Value
     def expressionNode(self):
@@ -63,12 +68,12 @@ class IntegerLiteral(Expression):
     def TokenLiteral(self):
         return self.Token.Literal
     def String(self):
-        return self.Value
+        return str(self.Value)
 
 ################################################################################
 
 class Boolean(Expression):
-    def __init__(self, Token: tokenz.Token, Value: bool):
+    def __init__(self, Token: _token.Token, Value: bool):
         self.Token = Token
         self.Value = Value
     def expressionNode(self):
@@ -82,7 +87,7 @@ class Boolean(Expression):
 ################################################################################
 
 class LetStatement(Statement):
-    def __init__(self,Token: tokenz.Token ,Name: Identifier,Value: Expression):
+    def __init__(self,Token: _token.Token ,Name: Identifier,Value: Expression):
         self.Token = Token
         self.Name = Name
         self.Value = Value
@@ -105,7 +110,7 @@ class LetStatement(Statement):
 ################################################################################
 
 class ReturnStatement(Statement):
-    def __init__(self,Token: tokenz.Token, ReturnValue: Expression):
+    def __init__(self,Token: _token.Token, ReturnValue: Expression):
         self.Token = Token
         self.ReturnValue = ReturnValue
     def statementNode(self):
@@ -124,7 +129,7 @@ class ReturnStatement(Statement):
 ################################################################################
 
 class ExpressionStatement(Statement):
-    def __init__(self, Token: tokenz.Token, Expression: Expression):
+    def __init__(self, Token: _token.Token, Expression: Expression):
         self.Token = Token
         self.Expression = Expression
     def statementNode(self):
@@ -139,7 +144,7 @@ class ExpressionStatement(Statement):
 ################################################################################
 
 class PrefixExpression(Expression):
-    def __init__(self, Token: tokenz.Token, Operator: str, Right: Expression):
+    def __init__(self, Token: _token.Token, Operator: str, Right: Expression):
         self.Token = Token
         self.Operator = Operator
         self.Right = Right
@@ -158,7 +163,7 @@ class PrefixExpression(Expression):
 ################################################################################
 
 class InfixExpression(Expression):
-    def __init__(self, Token: tokenz.Token, Left: Expression, Operator: str, Right: Expression):
+    def __init__(self, Token: _token.Token, Left: Expression, Operator: str, Right: Expression):
         self.Token = Token
         self.Left = Left
         self.Operator = Operator
@@ -179,7 +184,7 @@ class InfixExpression(Expression):
 ################################################################################
 
 class BlockStatement(Statement):
-    def __init__(self, Token: tokenz.Token, Statements: List[Statement]):
+    def __init__(self, Token: _token.Token, Statements: List[Statement]):
         self.Token = Token
         self.Statements = Statement
     def statementNode(self):
@@ -200,7 +205,7 @@ class BlockStatement(Statement):
 ################################################################################
 
 class IfExpression(Expression):
-    def __init__(self, Token: tokenz.Token, Condition: Expression, Consequence: BlockStatement, Alternative: BlockStatement):
+    def __init__(self, Token: _token.Token, Condition: Expression, Consequence: BlockStatement, Alternative: BlockStatement):
         self.Token = Token
         self.Condition = Condition
         self.Consequence = Consequence
@@ -223,7 +228,7 @@ class IfExpression(Expression):
 ################################################################################
 
 class FunctionLiteral(Expression):
-    def __init__(self, Token: tokenz.Token, Parameters: List[Identifier], Body: BlockStatement):
+    def __init__(self, Token: _token.Token, Parameters: List[Identifier], Body: BlockStatement):
         self.Token = Token
         self.Parameters = Parameters
         self.Body = Body
@@ -232,7 +237,6 @@ class FunctionLiteral(Expression):
     def TokenLiteral(self):
         return self.Token.Literal
     def String(self):
-        print("fuccc")
         out = ""
         params = []
         for param in self.Parameters:
@@ -249,7 +253,7 @@ class FunctionLiteral(Expression):
 ################################################################################
 
 class CallExpression(Expression):
-    def __init__(self, Token: tokenz.Token, Function: Expression, Arguments: List[Expression]):
+    def __init__(self, Token: _token.Token, Function: Expression, Arguments: List[Expression]):
         self.Token = Token
         self.Function = Function
         self.Arguments = []

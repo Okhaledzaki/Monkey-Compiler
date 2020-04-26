@@ -1,4 +1,4 @@
-from tokenz import *
+from _token import *
 
 
 keywords = {
