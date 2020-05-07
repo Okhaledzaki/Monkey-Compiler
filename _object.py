@@ -27,7 +27,10 @@ class Integer(Object):
         return f'{self.Value}'
     def Type(self):
         return obj.INTEGER_OBJ
-
+    def __eq__(self, other):
+        if type(self) is type(other):
+            return self.__dict__ == other.__dict__
+        return False
 ################################################################################
 
 class Boolean(Object):
@@ -37,7 +40,10 @@ class Boolean(Object):
         return f'{self.Value}'
     def Type(self):
         return obj.BOOLEAN_OBJ
-
+    def __eq__(self, other):
+        if type(self) is type(other):
+            return self.__dict__ == other.__dict__
+        return False
 ################################################################################
 
 class Null(object):
