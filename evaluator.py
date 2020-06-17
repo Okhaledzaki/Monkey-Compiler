@@ -19,7 +19,7 @@ def Eval(node : ast.Node) -> _object.Object:
         node = node.Expression                      # and InfixExpression at the same time
     
     if isinstance(node, ast.Program):
-        return evalStatements(node.Statements)
+        return evalProgram(node.Statements)
     elif isinstance(node, ast.IntegerLiteral):
         return _object.Integer(Value = node.Value)
     elif isinstance(node, ast.Boolean):
@@ -31,12 +31,30 @@ def Eval(node : ast.Node) -> _object.Object:
         left = Eval(node.Left)
         right = Eval(node.Right)
         return evalInfixExpression(node.Operator, left, right)
+    elif isinstance(node, ast.BlockStatement):
+        return evalBlockStatement(node.Statements)
+    elif isinstance(node, ast.IfExpression):
+        return evalIfExpression(node)
+    elif isinstance(node, ast.ReturnStatement):
+        val = Eval(node.ReturnValue)
+        return _object.ReturnValue(Value = val)
     return None
 
-def evalStatements(stmts : List[ast.Statement]) -> _object.Object:
+def evalBlockStatement(stmts : List[ast.Statement]) -> _object.Object:
     result : _object.Object = None
     for i in range(len(stmts)):
         result = Eval(stmts[i])
+        if isinstance(result, _object.ReturnValue):
+            return result
+    return result
+
+
+def evalProgram(stmts : List[ast.Statement]) -> _object.Object:
+    result : _object.Object = None
+    for i in range(len(stmts)):
+        result = Eval(stmts[i])
+        if isinstance(result, _object.ReturnValue):
+            return result.Value
     return result
 
 def evalPrefixExpression(operator : str, right : _object.Object):
@@ -66,10 +84,12 @@ def evalBangOperatorExpression(right: _object.Object):
 def evalInfixExpression(operator: str, left: _object.Object, right: _object.Object):
     if isinstance(left, _object.Integer) and isinstance(right, _object.Integer):
         return evalIntegerInfixExpression(operator, left, right)
+    if operator == "==":
+        return nativeBoolToBooleanObject(left == right)
+    if operator == "!=":
+        return nativeBoolToBooleanObject(left != right)
     else:
         return NULL
-
-
 
 def evalIntegerInfixExpression(operator: str, left: _object.Object, right: _object.Object):
     leftVal = left.Value
@@ -82,4 +102,35 @@ def evalIntegerInfixExpression(operator: str, left: _object.Object, right: _obje
         return _object.Integer(Value = leftVal * rightVal)
     if operator == "/":
         return _object.Integer(Value = leftVal / rightVal)
+    if operator == "<":
+        return nativeBoolToBooleanObject(leftVal < rightVal)
+    if operator == ">":
+        return nativeBoolToBooleanObject(leftVal > rightVal)
+    if operator == "==":
+        return nativeBoolToBooleanObject(leftVal == rightVal)
+    if operator == "!=":
+        return nativeBoolToBooleanObject(leftVal != rightVal)
     return NULL
+
+def nativeBoolToBooleanObject(truth):
+    if truth:
+        return TRUE
+    return FALSE
+
+def isTruthy(obj: _object.Object):
+    if obj == NULL:
+        return False
+    if obj == TRUE:
+        return True
+    if obj == FALSE:
+        return False
+    return True
+
+def evalIfExpression(ie):
+    condition = Eval(ie.Condition)
+    if isTruthy(condition):
+        return Eval(ie.Consequence)
+    elif ie.Alternative != None:
+        return Eval(ie.Alternative)
+    else:
+        return NULL

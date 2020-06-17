@@ -7,6 +7,8 @@ class obj(enum.Enum):
     INTEGER_OBJ = "INTEGER"
     BOOLEAN_OBJ = "BOOLEAN"
     NULL_OBJ    = "NULL"
+    RETURN_VALUE_OBJ = "RETURN_VALUE"
+    ERROR_OBJ = "ERROR"
 
 
 
@@ -46,7 +48,7 @@ class Boolean(Object):
         return False
 ################################################################################
 
-class Null(object):
+class Null(Object):
     def __init__(self):
         self.Value = None
     def Inspect(self):
@@ -56,5 +58,21 @@ class Null(object):
 
 #################################################################################
 
+class ReturnValue(Object):
+    def __init__(self, Value: Object):
+        self.Value = Value
+    def Type(self):
+        return obj.RETURN_VALUE_OBJ
+    def Inspect(self):
+        return self.Value.Inspect()
 
+#################################################################################
+
+class Error(Object):
+    def __init__(self, Message: str):
+        self.Message = Message
+    def Type(self):
+        return obj.ERROR_OBJ
+    def Inspect(self):
+        return "ERROR " + self.Message
 
